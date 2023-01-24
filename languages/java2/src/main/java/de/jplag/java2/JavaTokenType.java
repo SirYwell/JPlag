@@ -8,8 +8,7 @@ public enum JavaTokenType implements TokenType {
     J_QUESTIONMARK("COND"),
     J_ANNO_T("ANNO_T"),
     J_ASSIGN("ASSIGN"),
-    J_METHOD("METHOD")
-    ;
+    J_METHOD("METHOD");
 
     private final String description;
 

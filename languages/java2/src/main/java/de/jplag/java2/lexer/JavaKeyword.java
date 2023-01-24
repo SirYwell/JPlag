@@ -60,8 +60,7 @@ public enum JavaKeyword implements TokenType {
     TRY,
     VOID,
     VOLATILE,
-    WHILE,
-    ;
+    WHILE,;
 
     @Override
     public String getDescription() {
