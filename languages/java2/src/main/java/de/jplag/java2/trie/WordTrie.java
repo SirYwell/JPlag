@@ -8,7 +8,7 @@ import java.util.IntSummaryStatistics;
 import java.util.Map;
 import java.util.Optional;
 
-public class WordTrie<T> {
+public final class WordTrie<T> {
     private final char min;
     private final char max;
     private final Node root;
@@ -30,10 +30,6 @@ public class WordTrie<T> {
             wordTrie.insert(wordTrie.root, word, words.get(word));
         }
         return wordTrie;
-    }
-
-    public Optional<T> findMatch(String input) {
-        return findMatch(input.toCharArray(), 0, input.length());
     }
 
     public Optional<T> findMatch(char[] input, int start, int end) {
@@ -59,7 +55,7 @@ public class WordTrie<T> {
         }
     }
 
-    void insert(Node prev, String name, T value) {
+    private void insert(Node prev, String name, T value) {
         Node current = prev;
         for (int i = 0; i < name.length() - 1; i++) {
             int c = name.charAt(i) - min;

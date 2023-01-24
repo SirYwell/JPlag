@@ -12,15 +12,13 @@ public class JavaLexer {
     private static final WordTrie<JavaKeyword> KEYWORD_TRIE = WordTrie
             .ofWords(Arrays.stream(JavaKeyword.values()).collect(Collectors.toMap(JavaKeyword::toString, Function.identity())));
     private final char[] content;
-    private final int start;
     private final int end;
     private int nextPos;
 
     public JavaLexer(char[] content, int start, int end) {
         this.content = content;
-        this.start = start;
         this.end = end;
-        this.nextPos = this.start;
+        this.nextPos = start;
     }
 
     /**
@@ -42,18 +40,18 @@ public class JavaLexer {
             case ';':
             case ',':
             case '@':
-                return new SeparatorToken(new String(content, pos, this.nextPos), pos, this.nextPos);
+                return new SeparatorToken(new String(this.content, pos, this.nextPos), pos, this.nextPos);
             case '.':
                 if (hasMore(2) && peek() == '.' && peek(1) == '.') {
                     skip(2);
                 }
-                return new SeparatorToken(new String(content, pos, this.nextPos), pos, this.nextPos);
+                return new SeparatorToken(new String(this.content, pos, this.nextPos), pos, this.nextPos);
             case ':':
                 if (hasMore() && peek() == ':') {
                     next();
-                    return new SeparatorToken(new String(content, pos, this.nextPos), pos, this.nextPos);
+                    return new SeparatorToken(new String(this.content, pos, this.nextPos), pos, this.nextPos);
                 }
-                return new OperatorToken(new String(content, pos, this.nextPos), pos, this.nextPos);
+                return new OperatorToken(new String(this.content, pos, this.nextPos), pos, this.nextPos);
             case '/': // no comment, already skipped
             case '=':
             case '*':
@@ -79,7 +77,7 @@ public class JavaLexer {
                 return lexStringLiteral(pos);
             case '~':
             case '?':
-                return new OperatorToken(new String(content, pos, this.nextPos), pos, this.nextPos);
+                return new OperatorToken(new String(this.content, pos, this.nextPos), pos, this.nextPos);
             default:
                 skip(-1); // reset to previous
                 return lexLiteralOrKeywordOrIdentifier();
@@ -91,14 +89,14 @@ public class JavaLexer {
             char peek = peek();
             if (peek == '=') {
                 next();
-                return new OperatorToken(new String(content, pos, this.nextPos), pos, this.nextPos);
+                return new OperatorToken(new String(this.content, pos, this.nextPos), pos, this.nextPos);
             }
             if (peek == bracket && found < maxFound) {
                 next();
                 return angleBracket(pos, found + 1, maxFound, bracket);
             }
         }
-        return new OperatorToken(new String(content, pos, this.nextPos), pos, this.nextPos);
+        return new OperatorToken(new String(this.content, pos, this.nextPos), pos, this.nextPos);
     }
 
     private void skipUntilLineBreak() {
@@ -119,7 +117,6 @@ public class JavaLexer {
         do {
             int index = indexOf(first, pos);
             if (index < 0) {
-                // TODO what if not present?
                 return false;
             }
             if (Arrays.equals(this.content, index, index + chars.length, chars, 0, chars.length)) {
@@ -145,7 +142,7 @@ public class JavaLexer {
             return new IdentifierToken(pos, this.nextPos);
         } else if (Character.isDigit(next)) {
             readNumericLiteral(next);
-            return new LiteralToken(new String(content, pos, this.nextPos), pos, this.nextPos);
+            return new LiteralToken(new String(this.content, pos, this.nextPos), pos, this.nextPos);
         }
         return null;
     }
@@ -232,7 +229,6 @@ public class JavaLexer {
             skip(2);
             return lexTextBlockLiteral(pos);
         }
-        // TODO use indexOf and check if escaped
         while (hasMore()) {
             char peek = peek();
             if (peek == CHAR_ESCAPE_CHAR_CHAR) {
@@ -241,7 +237,7 @@ public class JavaLexer {
                     next(); // assuming the string is correct, we're skipping every escapable char, including "
                 }
             } else if (next() == '"') {
-                return new LiteralToken(new String(content, pos, this.nextPos), pos, this.nextPos);
+                return new LiteralToken(new String(this.content, pos, this.nextPos), pos, this.nextPos);
             }
         }
         return null;
@@ -257,7 +253,7 @@ public class JavaLexer {
                 }
             } else if (peek() == '"' && peek(1) == '"' && peek(2) == '"') {
                 skip(3);
-                return new LiteralToken(new String(content, pos, this.nextPos), pos, this.nextPos);
+                return new LiteralToken(new String(this.content, pos, this.nextPos), pos, this.nextPos);
             } else {
                 next();
             }
@@ -273,7 +269,7 @@ public class JavaLexer {
                 continue; // "unsafe" check, assuming there is a closing '
             } else if (peek == '\'') {
                 next();
-                return new LiteralToken(new String(content, startPos, this.nextPos), startPos, this.nextPos);
+                return new LiteralToken(new String(this.content, startPos, this.nextPos), startPos, this.nextPos);
             }
             next();
         }
@@ -284,7 +280,7 @@ public class JavaLexer {
         if (hasMore() && peek() == nextForDouble) {
             next();
         }
-        return new OperatorToken(new String(content, startPos, this.nextPos), startPos, this.nextPos);
+        return new OperatorToken(new String(this.content, startPos, this.nextPos), startPos, this.nextPos);
     }
 
     private Token singleOrDoubleOperator(int startPos, char... anyNext) {
@@ -297,7 +293,7 @@ public class JavaLexer {
                 }
             }
         }
-        return new OperatorToken(new String(content, startPos, this.nextPos), startPos, this.nextPos);
+        return new OperatorToken(new String(this.content, startPos, this.nextPos), startPos, this.nextPos);
     }
 
     private void skip(int i) {
