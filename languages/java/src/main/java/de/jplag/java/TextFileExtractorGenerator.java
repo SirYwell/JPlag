@@ -15,9 +15,7 @@ import com.sun.source.tree.Tree;
 import com.sun.source.util.Trees;
 
 /**
- * Generates an {@link Extractor} from a text file.
- * Format:
- * {@code
+ * Generates an {@link Extractor} from a text file. Format: {@code
  * <Tree.Kind> <Role> <Moment>: <TokenType>
  * }
  */

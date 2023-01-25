@@ -1,6 +1,7 @@
 package de.jplag.java;
 
 import java.util.Optional;
+
 import de.jplag.Token;
 import de.jplag.TokenType;
 
