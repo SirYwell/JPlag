@@ -3,6 +3,7 @@ package de.jplag.java;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,9 +23,7 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 
 import com.sun.source.tree.CompilationUnitTree;
-import com.sun.source.tree.LineMap;
 import com.sun.source.util.JavacTask;
-import com.sun.source.util.SourcePositions;
 import com.sun.source.util.Trees;
 
 public class JavacAdapter {
@@ -42,13 +41,10 @@ public class JavacAdapter {
             // https://stackoverflow.com/questions/72737445/system-java-compiler-behaves-different-depending-on-dependencies-defined-in-mave
             final CompilationTask task = javac.getTask(null, fileManager, listener, List.of("-proc:none"), null, javaFiles);
             final Trees trees = Trees.instance(task);
-            final SourcePositions positions = trees.getSourcePositions();
             for (final CompilationUnitTree ast : executeCompilationTask(task, parser.logger)) {
                 File file = new File(ast.getSourceFile().toUri());
-                final LineMap map = ast.getLineMap();
-                var scanner = new TokenGeneratingTreeScanner(file, parser, map, positions, ast);
-                ast.accept(scanner, null);
-                parsingExceptions.addAll(scanner.getParsingExceptions());
+                OrderedTreeScanner extractor = new PluggableExtractor(new Collector(getExtractor(trees, ast), parser));
+                ast.accept(extractor, Role.COMPILATION_UNIT);
                 parser.add(Token.fileEnd(file));
             }
         } catch (IOException exception) {
@@ -58,6 +54,11 @@ public class JavacAdapter {
         if (!parsingExceptions.isEmpty()) {
             throw ParsingException.wrappingExceptions(parsingExceptions);
         }
+    }
+
+    private static Extractor getExtractor(Trees trees, CompilationUnitTree ast) {
+        // TODO currently hardcoded
+        return new TextFileExtractorGenerator(Path.of("src", "main", "resources", "example.txt")).generate(ast, trees);
     }
 
     private Iterable<? extends CompilationUnitTree> executeCompilationTask(final CompilationTask task, Logger logger) {
