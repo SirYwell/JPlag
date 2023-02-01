@@ -79,18 +79,18 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
     }
 
     private void scan(Tree tree, Role role) {
+        if (tree == null) {
+            return;
+        }
         enter(tree, role);
         tree.accept(this, role);
         exit(tree, role);
     }
 
-    private void scanIfPresent(Tree node, Role role) {
-        if (node != null) {
-            scan(node, role);
-        }
-    }
-
     private void scanAll(Iterable<? extends Tree> iterable, Role role) {
+        if (iterable == null) {
+            return;
+        }
         enterAll(iterable, role);
         for (Tree tree : iterable) {
             scan(tree, role);
@@ -186,7 +186,7 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
         scan(node.getModifiers());
         // name
         scanAll(node.getTypeParameters(), Role.TYPE_PARAMETER);
-        scanIfPresent(node.getExtendsClause(), Role.TYPE_REFERENCE);
+        scan(node.getExtendsClause(), Role.TYPE_REFERENCE);
         scanAll(node.getImplementsClause(), Role.TYPE_REFERENCE);
         scanAll(node.getPermitsClause(), Role.TYPE_REFERENCE);
         scanAll(node.getMembers(), Role.MEMBER);
@@ -289,15 +289,15 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
 
     @Override
     public Void visitMethod(MethodTree node, Role role) {
-        scanIfPresent(node.getModifiers(), Role.MODIFIER);
+        scan(node.getModifiers(), Role.MODIFIER);
         scanAll(node.getTypeParameters(), Role.TYPE_PARAMETER);
         scan(node.getReturnType(), Role.TYPE_REFERENCE);
         // name
-        scanIfPresent(node.getReceiverParameter(), Role.RECEIVER);
+        scan(node.getReceiverParameter(), Role.RECEIVER);
         scanAll(node.getParameters(), Role.VARIABLE);
         scanAll(node.getThrows(), Role.THROWS);
-        scanIfPresent(node.getDefaultValue(), Role.DEFAULT_VALUE);
-        scanIfPresent(node.getBody(), Role.BLOCK);
+        scan(node.getDefaultValue(), Role.DEFAULT_VALUE);
+        scan(node.getBody(), Role.BLOCK);
         return null;
     }
 
@@ -330,12 +330,12 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
 
     @Override
     public Void visitNewClass(NewClassTree node, Role role) {
-        scanIfPresent(node.getEnclosingExpression(), Role.ENCLOSING);
+        scan(node.getEnclosingExpression(), Role.ENCLOSING);
         // new keyword
         scanAll(node.getTypeArguments(), Role.TYPE_ARGUMENT);
         scan(node.getIdentifier(), Role.IDENTIFIER);
         scanAll(node.getArguments(), Role.CONSTRUCTOR_ARGUMENT);
-        scanIfPresent(node.getClassBody(), Role.BLOCK);
+        scan(node.getClassBody(), Role.BLOCK);
         return null;
     }
 
@@ -360,7 +360,7 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
 
     @Override
     public Void visitReturn(ReturnTree node, Role role) {
-        scanIfPresent(node.getExpression(), Role.EXPRESSION);
+        scan(node.getExpression(), Role.EXPRESSION);
         return null;
     }
 
@@ -416,7 +416,7 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
         scanAll(node.getResources(), Role.RESOURCE);
         scan(node.getBlock(), Role.BLOCK);
         scanAll(node.getCatches(), Role.CATCH);
-        scanIfPresent(node.getFinallyBlock(), Role.FINALLY);
+        scan(node.getFinallyBlock(), Role.FINALLY);
         return null;
     }
 
