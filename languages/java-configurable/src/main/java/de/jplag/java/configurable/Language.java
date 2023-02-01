@@ -29,7 +29,7 @@ public class Language implements de.jplag.Language {
 
     @Override
     public String getName() {
-        return "Javac based AST plugin";
+        return "Javac based AST plugin (configurable)";
     }
 
     @Override
