@@ -7,8 +7,7 @@ public enum JavaTokenType implements TokenType {
     J_BLOCK_END("}BLOCK"),
     J_QUESTIONMARK("COND"),
     J_ANNO_T("ANNO_T"),
-    J_ASSIGN("ASSIGN"),
-    J_METHOD("METHOD");
+    J_ASSIGN("ASSIGN"),;
 
     private final String description;
 

@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Set;
 
 import de.jplag.ParsingException;
-import de.jplag.java2.lexer.IdentifierToken;
 import de.jplag.java2.lexer.JavaKeyword;
 import de.jplag.java2.lexer.JavaLexer;
 import de.jplag.java2.lexer.KeywordToken;
@@ -18,6 +17,9 @@ import de.jplag.java2.lexer.OperatorToken;
 import de.jplag.java2.lexer.SeparatorToken;
 import de.jplag.java2.lexer.Token;
 
+/**
+ * Extracts tokens from Java code similar to {@code CPP.jj} in the C++ language module.
+ */
 public class LexerExtractor {
     private static final char LF = '\n';
     private static final char CR = '\r';
@@ -70,19 +72,22 @@ public class LexerExtractor {
                 parser.add(new de.jplag.Token(keywordToken.keyword(), path.toFile(), currentLine, column, token.length()));
             } else if (token instanceof OperatorToken operatorToken) {
                 String operator = operatorToken.operator();
-                if ((operator.contains("=") && !operator.equals("==")) || operator.equals("++") || operator.equals("--")) {
+                if (isAssignmentOperator(operator)) {
                     parser.add(JavaTokenType.J_ASSIGN, path.toFile(), currentLine, column, token.length());
                 } else if (operator.equals("?")) {
                     parser.add(JavaTokenType.J_QUESTIONMARK, path.toFile(), currentLine, column, token.length());
                 }
-            } else if (token instanceof IdentifierToken) {
-                if (i + 1 < list.size() && list.get(i + 1)instanceof SeparatorToken sw && sw.separator().equals("(")) {
-                    i++;
-                    parser.add(JavaTokenType.J_METHOD, path.toFile(), currentLine, column, token.length());
-                }
             }
             lastEnd = token.end();
         }
+    }
+
+    private boolean isAssignmentOperator(String operator) {
+        return switch (operator) {
+            case "==", "!=", "<=", ">=" -> false;
+            case "++", "--" -> true;
+            default -> operator.endsWith("=");
+        };
     }
 
     // from text module
