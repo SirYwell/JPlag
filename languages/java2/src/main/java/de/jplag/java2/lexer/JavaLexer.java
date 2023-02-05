@@ -7,6 +7,9 @@ import java.util.stream.Collectors;
 
 import de.jplag.java2.trie.WordTrie;
 
+/**
+ * A Java 17 compatible Java lexer. This lexer is handwritten and kept close to the JLS § 3.
+ */
 public class JavaLexer {
     private static final char CHAR_ESCAPE_CHAR_CHAR = '\\';
     private static final WordTrie<JavaKeyword> KEYWORD_TRIE = WordTrie

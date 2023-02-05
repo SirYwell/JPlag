@@ -36,7 +36,7 @@ public class LexerExtractor {
         this.path = file.toPath();
     }
 
-    public void parse(Parser parser) throws ParsingException {
+    public void parse(JavaLexerAdapter parser) throws ParsingException {
         try {
             char[] chars = Files.readString(path).toCharArray();
             JavaLexer lexer = new JavaLexer(chars, 0, chars.length);
@@ -51,7 +51,7 @@ public class LexerExtractor {
         }
     }
 
-    private void addTokens(List<Token> list, char[] content, Parser parser) {
+    private void addTokens(List<Token> list, char[] content, JavaLexerAdapter parser) {
         int lastEnd = 0;
         for (int i = 0; i < list.size(); i++) {
             Token token = list.get(i);
@@ -62,20 +62,20 @@ public class LexerExtractor {
                     case "@" -> {
                         if (i + 1 < list.size() && list.get(i + 1)instanceof KeywordToken kw && kw.keyword() == JavaKeyword.INTERFACE) {
                             i++;
-                            parser.add(JavaTokenType.J_ANNO_T, path.toFile(), currentLine, column, kw.end() - token.start());
+                            parser.add(JavaTokenType.ANNO_T, path.toFile(), currentLine, column, kw.end() - token.start());
                         }
                     }
-                    case "{" -> parser.add(JavaTokenType.J_BLOCK_BEGIN, path.toFile(), currentLine, column, token.length());
-                    case "}" -> parser.add(JavaTokenType.J_BLOCK_END, path.toFile(), currentLine, column, token.length());
+                    case "{" -> parser.add(JavaTokenType.BLOCK_BEGIN, path.toFile(), currentLine, column, token.length());
+                    case "}" -> parser.add(JavaTokenType.BLOCK_END, path.toFile(), currentLine, column, token.length());
                 }
             } else if (token instanceof KeywordToken keywordToken && !BOOLEAN_LITERALS.contains(keywordToken.keyword())) {
                 parser.add(new de.jplag.Token(keywordToken.keyword(), path.toFile(), currentLine, column, token.length()));
             } else if (token instanceof OperatorToken operatorToken) {
                 String operator = operatorToken.operator();
                 if (isAssignmentOperator(operator)) {
-                    parser.add(JavaTokenType.J_ASSIGN, path.toFile(), currentLine, column, token.length());
+                    parser.add(JavaTokenType.ASSIGN, path.toFile(), currentLine, column, token.length());
                 } else if (operator.equals("?")) {
-                    parser.add(JavaTokenType.J_QUESTIONMARK, path.toFile(), currentLine, column, token.length());
+                    parser.add(JavaTokenType.QUESTIONMARK, path.toFile(), currentLine, column, token.length());
                 }
             }
             lastEnd = token.end();

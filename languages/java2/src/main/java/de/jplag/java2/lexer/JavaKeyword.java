@@ -2,6 +2,15 @@ package de.jplag.java2.lexer;
 
 import de.jplag.TokenType;
 
+/**
+ * Java keywords (JLS § 3.9), excluding
+ * <ul>
+ * <li>_ (underscore)</li>
+ * <li>other reserved but unused keywords</li>
+ * <li>var</li>
+ * <li>module-info.java specific keywords</li>
+ * </ul>
+ */
 public enum JavaKeyword implements TokenType {
     ABSTRACT,
     ASSERT,
@@ -40,6 +49,7 @@ public enum JavaKeyword implements TokenType {
     },
     NULL,
     PACKAGE,
+    PERMITS,
     PRIVATE,
     PROTECTED,
     PUBLIC,
@@ -60,7 +70,8 @@ public enum JavaKeyword implements TokenType {
     TRY,
     VOID,
     VOLATILE,
-    WHILE,;
+    WHILE,
+    YIELD;
 
     @Override
     public String getDescription() {

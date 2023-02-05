@@ -8,6 +8,10 @@ import java.util.IntSummaryStatistics;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * A trie data structure for fast lookup.
+ * @param <T> the type of the elements stored in the trie nodes.
+ */
 public final class WordTrie<T> {
     private final char min;
     private final char max;
@@ -19,6 +23,11 @@ public final class WordTrie<T> {
         this.root = new Node();
     }
 
+    /**
+     * {@return an immutable trie mapping the given strings to values}
+     * @param words the mapping.
+     * @param <T> the type of the elements stored in the trie nodes.
+     */
     public static <T> WordTrie<T> ofWords(Map<String, T> words) {
         IntSummaryStatistics statistics = words.keySet().stream().flatMapToInt(String::chars).summaryStatistics();
         char min = (char) statistics.getMin();
@@ -32,6 +41,12 @@ public final class WordTrie<T> {
         return wordTrie;
     }
 
+    /**
+     * {@return an Optional holding the value mapped by the given input, or an empty Optional}
+     * @param input the input to search a mapping for.
+     * @param start the position in the input to start the search.
+     * @param end the position in the input to stop the search.
+     */
     public Optional<T> findMatch(char[] input, int start, int end) {
         checkBounds(input.length, start, end);
         if (input.length == 0) {

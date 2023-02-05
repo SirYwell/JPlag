@@ -10,16 +10,16 @@ import de.jplag.ParsingException;
 import de.jplag.Token;
 
 /**
- * Language for Java 9 and newer.
+ * Language for Java.
  */
 @MetaInfServices(de.jplag.Language.class)
 public class Language implements de.jplag.Language {
     private static final String IDENTIFIER = "java2";
 
-    private final Parser parser;
+    private final JavaLexerAdapter parser;
 
     public Language() {
-        parser = new Parser();
+        parser = new JavaLexerAdapter();
     }
 
     @Override

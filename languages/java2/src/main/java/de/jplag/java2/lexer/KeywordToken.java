@@ -1,5 +1,8 @@
 package de.jplag.java2.lexer;
 
+/**
+ * A token representing a keyword (JLS § 3.9)
+ */
 public record KeywordToken(JavaKeyword keyword, int start) implements Token {
 
     @Override
