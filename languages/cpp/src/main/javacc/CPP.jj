@@ -157,6 +157,7 @@ TOKEN :
 | < DOTSTAR: ".*" >
 | < ARROWSTAR: "->*" >
 | < AUTO: "auto" >
+| < BOOL: "bool" >
 | < BREAK: "break" >
 | < CASE: "case" >
 | < CATCH: "catch" >
@@ -322,6 +323,7 @@ void token(): {}
 | "~"
 | "!"
 | "auto"         { delegatingScanner.add(C_AUTO,token); }
+| "bool"         { delegatingScanner.add(C_BOOL,token); }
 | "break"        { delegatingScanner.add(C_BREAK,token); }
 | "case"         { delegatingScanner.add(C_CASE,token); }
 | "catch"        { delegatingScanner.add(C_CATCH,token); }

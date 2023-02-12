@@ -12,6 +12,7 @@ public enum CPPTokenType implements TokenType {
     C_ARROW("ARROW"),
     C_ARROWSTAR("ARROWSTAR"),
     C_AUTO("AUTO"),
+    C_BOOL("BOOL"),
     C_BREAK("BREAK"),
     C_CASE("CASE"),
     C_CATCH("CATCH"),
