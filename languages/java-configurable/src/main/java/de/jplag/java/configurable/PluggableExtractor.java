@@ -13,22 +13,27 @@ public class PluggableExtractor extends OrderedTreeScanner {
     }
 
     @Override
-    protected void enter(Tree tree, Role role) {
-        tree.accept(this.collector, new Context(role, Moment.PRE));
+    protected void pre(Tree tree) {
+        tree.accept(this.collector, new Context(Moment.PRE));
     }
 
     @Override
-    protected void exit(Tree tree, Role role) {
-        tree.accept(this.collector, new Context(role, Moment.POST));
+    protected void middle(Tree tree) {
+        tree.accept(this.collector, new Context(Moment.MIDDLE));
     }
 
     @Override
-    protected void enterAll(Iterable<? extends Tree> iterable, Role role) {
+    protected void post(Tree tree) {
+        tree.accept(this.collector, new Context(Moment.POST));
+    }
+
+    @Override
+    protected void enterAll(Iterable<? extends Tree> iterable) {
 
     }
 
     @Override
-    protected void exitAll(Iterable<? extends Tree> iterable, Role role) {
+    protected void exitAll(Iterable<? extends Tree> iterable) {
 
     }
 }

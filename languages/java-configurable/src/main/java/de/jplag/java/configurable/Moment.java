@@ -5,5 +5,6 @@ package de.jplag.java.configurable;
  */
 public enum Moment {
     PRE,
+    MIDDLE,
     POST
 }

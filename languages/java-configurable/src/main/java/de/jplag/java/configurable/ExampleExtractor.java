@@ -22,7 +22,7 @@ public class ExampleExtractor extends Extractor {
     @Override
     protected Token defaultAction(Tree node, Context context) {
         return switch (context.moment()) {
-            case PRE -> createStart(matcher.match(node.getKind(), context).orElseThrow(), node, 1);
+            case PRE, MIDDLE -> createStart(matcher.match(node.getKind(), context).orElseThrow(), node, 1);
             case POST -> createEnd(matcher.match(node.getKind(), context).orElseThrow(), node, 1);
         };
     }
@@ -36,6 +36,7 @@ public class ExampleExtractor extends Extractor {
         private String nameGen(Tree.Kind kind, Context context) {
             return switch (context.moment()) {
                 case PRE -> kind.name() + "{";
+                case MIDDLE -> kind.name();
                 case POST -> "}" + kind.name();
             };
         }

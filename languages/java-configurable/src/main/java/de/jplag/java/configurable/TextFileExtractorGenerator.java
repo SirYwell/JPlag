@@ -42,7 +42,7 @@ public class TextFileExtractorGenerator implements ExtractorGenerator {
         }
         List<MatchRule> matchRules = lines.stream().map(s -> s.split(":")).map(arr -> (MatchRule) (kind, context) -> {
             String[] first = arr[0].split(" ");
-            if (kind.name().equals(first[0]) && context.role().name().equals(first[1]) && context.moment().name().equals(first[2])) {
+            if (kind.name().equals(first[0]) && context.moment().name().equals(first[1])) {
                 return Optional.of(new TT(arr[1]));
             }
             return Optional.empty();
@@ -55,7 +55,7 @@ public class TextFileExtractorGenerator implements ExtractorGenerator {
                         .filter(Optional::isPresent) //
                         .map(Optional::get) //
                         .map(tokenType -> switch (context.moment()) {
-                    case PRE -> createStart(tokenType, node, 1);
+                    case PRE, MIDDLE -> createStart(tokenType, node, 1);
                     case POST -> createEnd(tokenType, node, 1);
                 }) //
                         .filter(Objects::nonNull) //
