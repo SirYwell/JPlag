@@ -12,12 +12,13 @@ import de.jplag.TokenType;
 
 public class Parser extends AbstractParser {
     private List<Token> tokens;
+    private final ExtractorGenerator extractorGenerator;
 
     /**
      * Creates the parser.
      */
-    public Parser() {
-        super();
+    public Parser(ExtractorGenerator extractorGenerator) {
+        this.extractorGenerator = extractorGenerator;
     }
 
     public List<Token> parse(Set<File> files) throws ParsingException {
@@ -32,5 +33,9 @@ public class Parser extends AbstractParser {
 
     public void add(Token token) {
         tokens.add(token);
+    }
+
+    ExtractorGenerator getExtractorGenerator() {
+        return extractorGenerator;
     }
 }

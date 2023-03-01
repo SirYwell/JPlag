@@ -37,7 +37,7 @@ class LanguageTest {
         } catch (IOException e) {
             throw new TestAbortedException("Failed to write temp file", e);
         }
-        Language language = new Language();
+        ConfigurableJavaLanguage language = new ConfigurableJavaLanguage(null);
         List<Token> tokens;
         try {
             tokens = language.parse(Set.of(filePath.toFile()));

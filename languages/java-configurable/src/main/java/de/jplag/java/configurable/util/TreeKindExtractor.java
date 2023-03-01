@@ -10,22 +10,19 @@ import com.sun.source.tree.Tree;
 
 public class TreeKindExtractor {
     public static void main(String[] args) {
-        Map<? extends Class<? extends Tree>, List<Tree.Kind>> categories = Arrays.stream(Tree.Kind.values())
-                .filter(k -> k != Tree.Kind.OTHER) // invalid kind
+        Map<? extends Class<? extends Tree>, List<Tree.Kind>> categories = Arrays.stream(Tree.Kind.values()).filter(k -> k != Tree.Kind.OTHER) // invalid
+                                                                                                                                               // kind
                 .collect(Collectors.groupingBy(Tree.Kind::asInterface));
         StringBuilder builder = new StringBuilder();
         for (var entry : categories.entrySet()) {
             String categoryName = toCategoryName(entry.getKey());
-            builder.append("- ")
-                    .append(categoryName);
+            builder.append("- ").append(categoryName);
             if (entry.getValue().size() == 1 && entry.getValue().get(0).name().equals(categoryName)) {
                 builder.append(System.lineSeparator());
                 continue;
             }
             for (Tree.Kind kind : entry.getValue()) {
-                builder.append(System.lineSeparator())
-                        .append("  - ")
-                        .append(kind.name());
+                builder.append(System.lineSeparator()).append("  - ").append(kind.name());
             }
             builder.append(System.lineSeparator());
         }

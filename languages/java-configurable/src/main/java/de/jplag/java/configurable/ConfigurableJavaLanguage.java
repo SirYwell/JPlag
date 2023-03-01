@@ -6,20 +6,21 @@ import java.util.Set;
 
 import org.kohsuke.MetaInfServices;
 
+import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
 
 /**
  * Language for Java 9 and newer.
  */
-@MetaInfServices(de.jplag.Language.class)
-public class Language implements de.jplag.Language {
-    private static final String IDENTIFIER = "java";
+@MetaInfServices(Language.class)
+public class ConfigurableJavaLanguage implements Language {
+    private static final String IDENTIFIER = "java-configurable";
 
     private final Parser parser;
 
-    public Language() {
-        parser = new Parser();
+    public ConfigurableJavaLanguage(ExtractorGenerator extractorGenerator) {
+        parser = new Parser(extractorGenerator);
     }
 
     @Override

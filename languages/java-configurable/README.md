@@ -8,10 +8,8 @@ The language module supports up to Java 17. Preview features might not be fully 
 
 ### Token Extraction
 
-The token extraction can be managed via a simple text based file.
-
-`src/main/resources/example.txt` contains a basic example of how such file can look like.
-The file currently is hardcoded in `JavacAdapter`.
+This language module requires a `Extractor`.
+Its implementation deals with extracting tokens based on given context.
 
 ### Usage
 

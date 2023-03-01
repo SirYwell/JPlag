@@ -3,7 +3,6 @@ package de.jplag.java.configurable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,8 +42,9 @@ public class JavacAdapter {
             final Trees trees = Trees.instance(task);
             for (final CompilationUnitTree ast : executeCompilationTask(task, parser.logger)) {
                 File file = new File(ast.getSourceFile().toUri());
-                OrderedTreeScanner extractor = new PluggableExtractor(new Collector(getExtractor(trees, ast), parser));
-                ast.accept(extractor, Role.COMPILATION_UNIT);
+                TokenFactory tokenFactory = new TokenFactory(ast, trees);
+                OrderedTreeScanner extractor = new ContextAdapter(new Collector(getExtractor(parser, trees, ast), tokenFactory, parser));
+                ast.accept(extractor, null);
                 parser.add(Token.fileEnd(file));
             }
         } catch (IOException exception) {
@@ -56,9 +56,10 @@ public class JavacAdapter {
         }
     }
 
-    private static Extractor getExtractor(Trees trees, CompilationUnitTree ast) {
+    private static Extractor getExtractor(Parser parser, Trees trees, CompilationUnitTree ast) {
         // TODO currently hardcoded
-        return new TextFileExtractorGenerator(Path.of("src", "main", "resources", "example.txt")).generate(ast, trees);
+        // return new TextFileExtractorGenerator(Path.of("src", "main", "resources", "example.txt")).generate(ast, trees);
+        return parser.getExtractorGenerator().generate(ast, trees);
     }
 
     private Iterable<? extends CompilationUnitTree> executeCompilationTask(final CompilationTask task, Logger logger) {

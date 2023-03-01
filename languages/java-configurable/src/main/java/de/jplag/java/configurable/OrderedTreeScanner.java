@@ -71,7 +71,7 @@ import com.sun.source.tree.YieldTree;
 /**
  * Base class to visit an AST in the order of the appearance of the elements.
  */
-public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
+public abstract class OrderedTreeScanner implements TreeVisitor<Void, Void> {
 
     private void scan(Tree tree) {
         if (tree == null) {
@@ -104,21 +104,21 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
     protected abstract void exitAll(Iterable<? extends Tree> iterable);
 
     @Override
-    public Void visitAnnotatedType(AnnotatedTypeTree node, Role role) {
+    public Void visitAnnotatedType(AnnotatedTypeTree node, Void unused) {
         scanAll(node.getAnnotations());
         scan(node.getUnderlyingType());
         return null;
     }
 
     @Override
-    public Void visitAnnotation(AnnotationTree node, Role role) {
+    public Void visitAnnotation(AnnotationTree node, Void unused) {
         scan(node.getAnnotationType());
         scanAll(node.getArguments());
         return null;
     }
 
     @Override
-    public Void visitMethodInvocation(MethodInvocationTree node, Role role) {
+    public Void visitMethodInvocation(MethodInvocationTree node, Void unused) {
         scan(node.getMethodSelect());
         scanAll(node.getTypeArguments());
         scanAll(node.getArguments());
@@ -126,14 +126,14 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
     }
 
     @Override
-    public Void visitAssert(AssertTree node, Role role) {
+    public Void visitAssert(AssertTree node, Void unused) {
         scan(node.getCondition());
-        scan(node.getDetail()); // TODO
+        scan(node.getDetail());
         return null;
     }
 
     @Override
-    public Void visitAssignment(AssignmentTree node, Role role) {
+    public Void visitAssignment(AssignmentTree node, Void unused) {
         scan(node.getVariable());
         middle(node);
         scan(node.getExpression());
@@ -141,7 +141,7 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
     }
 
     @Override
-    public Void visitCompoundAssignment(CompoundAssignmentTree node, Role role) {
+    public Void visitCompoundAssignment(CompoundAssignmentTree node, Void unused) {
         scan(node.getVariable());
         middle(node);
         scan(node.getExpression());
@@ -149,7 +149,7 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
     }
 
     @Override
-    public Void visitBinary(BinaryTree node, Role role) {
+    public Void visitBinary(BinaryTree node, Void unused) {
         scan(node.getLeftOperand());
         middle(node);
         scan(node.getRightOperand());
@@ -157,31 +157,35 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
     }
 
     @Override
-    public Void visitBlock(BlockTree node, Role role) {
+    public Void visitBlock(BlockTree node, Void unused) {
         scanAll(node.getStatements());
         return null;
     }
 
     @Override
-    public Void visitBreak(BreakTree node, Role role) {
+    public Void visitBreak(BreakTree node, Void unused) {
         return null;
     }
 
     @Override
-    public Void visitCase(CaseTree node, Role role) {
-        // TODO
+    public Void visitCase(CaseTree node, Void unused) {
+        // TODO there might be duplication here
+        scanAll(node.getExpressions());
+        scanAll(node.getStatements());
+        scanAll(node.getLabels());
+        scan(node.getBody());
         return null;
     }
 
     @Override
-    public Void visitCatch(CatchTree node, Role role) {
+    public Void visitCatch(CatchTree node, Void unused) {
         scan(node.getParameter());
         scan(node.getBlock());
         return null;
     }
 
     @Override
-    public Void visitClass(ClassTree node, Role role) {
+    public Void visitClass(ClassTree node, Void unused) {
         scan(node.getModifiers());
         middle(node);
         scanAll(node.getTypeParameters());
@@ -193,7 +197,7 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
     }
 
     @Override
-    public Void visitConditionalExpression(ConditionalExpressionTree node, Role role) {
+    public Void visitConditionalExpression(ConditionalExpressionTree node, Void unused) {
         scan(node.getCondition());
         scan(node.getTrueExpression());
         scan(node.getFalseExpression());
@@ -201,30 +205,30 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
     }
 
     @Override
-    public Void visitContinue(ContinueTree node, Role role) {
+    public Void visitContinue(ContinueTree node, Void unused) {
         return null;
     }
 
     @Override
-    public Void visitDoWhileLoop(DoWhileLoopTree node, Role role) {
+    public Void visitDoWhileLoop(DoWhileLoopTree node, Void unused) {
         scan(node.getStatement());
         scan(node.getCondition());
         return null;
     }
 
     @Override
-    public Void visitErroneous(ErroneousTree node, Role role) {
+    public Void visitErroneous(ErroneousTree node, Void unused) {
         return null;
     }
 
     @Override
-    public Void visitExpressionStatement(ExpressionStatementTree node, Role role) {
+    public Void visitExpressionStatement(ExpressionStatementTree node, Void unused) {
         scan(node.getExpression());
         return null;
     }
 
     @Override
-    public Void visitEnhancedForLoop(EnhancedForLoopTree node, Role role) {
+    public Void visitEnhancedForLoop(EnhancedForLoopTree node, Void unused) {
         scan(node.getVariable());
         scan(node.getExpression());
         scan(node.getStatement());
@@ -232,7 +236,7 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
     }
 
     @Override
-    public Void visitForLoop(ForLoopTree node, Role role) {
+    public Void visitForLoop(ForLoopTree node, Void unused) {
         scanAll(node.getInitializer());
         scan(node.getCondition());
         scanAll(node.getUpdate());
@@ -241,54 +245,59 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
     }
 
     @Override
-    public Void visitIdentifier(IdentifierTree node, Role role) {
+    public Void visitIdentifier(IdentifierTree node, Void unused) {
         return null;
     }
 
     @Override
-    public Void visitIf(IfTree node, Role role) {
+    public Void visitIf(IfTree node, Void unused) {
         scan(node.getCondition());
         scan(node.getThenStatement());
+        // special case: visit IfTree as middle for else block
+        if (node.getElseStatement() != null) {
+            middle(node);
+        }
         scan(node.getElseStatement());
         return null;
     }
 
     @Override
-    public Void visitImport(ImportTree node, Role role) {
+    public Void visitImport(ImportTree node, Void unused) {
         scan(node.getQualifiedIdentifier());
         return null;
     }
 
     @Override
-    public Void visitArrayAccess(ArrayAccessTree node, Role role) {
+    public Void visitArrayAccess(ArrayAccessTree node, Void unused) {
         scan(node.getExpression());
         scan(node.getIndex());
         return null;
     }
 
     @Override
-    public Void visitLabeledStatement(LabeledStatementTree node, Role role) {
+    public Void visitLabeledStatement(LabeledStatementTree node, Void unused) {
         scan(node.getStatement());
         return null;
     }
 
     @Override
-    public Void visitLiteral(LiteralTree node, Role role) {
+    public Void visitLiteral(LiteralTree node, Void unused) {
         return null;
     }
 
     @Override
-    public Void visitBindingPattern(BindingPatternTree node, Role role) {
+    public Void visitBindingPattern(BindingPatternTree node, Void unused) {
+        scan(node.getVariable());
         return null;
     }
 
     @Override
-    public Void visitDefaultCaseLabel(DefaultCaseLabelTree node, Role role) {
+    public Void visitDefaultCaseLabel(DefaultCaseLabelTree node, Void unused) {
         return null;
     }
 
     @Override
-    public Void visitMethod(MethodTree node, Role role) {
+    public Void visitMethod(MethodTree node, Void unused) {
         scan(node.getModifiers());
         scanAll(node.getTypeParameters());
         scan(node.getReturnType());
@@ -302,14 +311,14 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
     }
 
     @Override
-    public Void visitModifiers(ModifiersTree node, Role role) {
+    public Void visitModifiers(ModifiersTree node, Void unused) {
         scanAll(node.getAnnotations());
         // flags
         return null;
     }
 
     @Override
-    public Void visitNewArray(NewArrayTree node, Role role) {
+    public Void visitNewArray(NewArrayTree node, Void unused) {
         scanAll(node.getAnnotations());
         scan(node.getType());
         // TODO dim annotations
@@ -319,20 +328,20 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
     }
 
     @Override
-    public Void visitGuardedPattern(GuardedPatternTree node, Role role) {
+    public Void visitGuardedPattern(GuardedPatternTree node, Void unused) {
         scan(node.getPattern());
         scan(node.getExpression());
         return null;
     }
 
     @Override
-    public Void visitParenthesizedPattern(ParenthesizedPatternTree node, Role role) {
+    public Void visitParenthesizedPattern(ParenthesizedPatternTree node, Void unused) {
         scan(node.getPattern());
         return null;
     }
 
     @Override
-    public Void visitNewClass(NewClassTree node, Role role) {
+    public Void visitNewClass(NewClassTree node, Void unused) {
         scan(node.getEnclosingExpression());
         // new keyword
         scanAll(node.getTypeArguments());
@@ -343,78 +352,78 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
     }
 
     @Override
-    public Void visitLambdaExpression(LambdaExpressionTree node, Role role) {
+    public Void visitLambdaExpression(LambdaExpressionTree node, Void unused) {
         scanAll(node.getParameters());
         scan(node.getBody());
         return null;
     }
 
     @Override
-    public Void visitPackage(PackageTree node, Role role) {
+    public Void visitPackage(PackageTree node, Void unused) {
         scanAll(node.getAnnotations());
         scan(node.getPackageName());
         return null;
     }
 
     @Override
-    public Void visitParenthesized(ParenthesizedTree node, Role role) {
-        node.getExpression().accept(this, role); // skip parentheses for now (?)
-        return null;
-    }
-
-    @Override
-    public Void visitReturn(ReturnTree node, Role role) {
+    public Void visitParenthesized(ParenthesizedTree node, Void unused) {
         scan(node.getExpression());
         return null;
     }
 
     @Override
-    public Void visitMemberSelect(MemberSelectTree node, Role role) {
+    public Void visitReturn(ReturnTree node, Void unused) {
         scan(node.getExpression());
         return null;
     }
 
     @Override
-    public Void visitMemberReference(MemberReferenceTree node, Role role) {
+    public Void visitMemberSelect(MemberSelectTree node, Void unused) {
+        scan(node.getExpression());
+        return null;
+    }
+
+    @Override
+    public Void visitMemberReference(MemberReferenceTree node, Void unused) {
         scan(node.getQualifierExpression());
         scanAll(node.getTypeArguments());
         return null;
     }
 
     @Override
-    public Void visitEmptyStatement(EmptyStatementTree node, Role role) {
+    public Void visitEmptyStatement(EmptyStatementTree node, Void unused) {
         return null;
     }
 
     @Override
-    public Void visitSwitch(SwitchTree node, Role role) {
+    public Void visitSwitch(SwitchTree node, Void unused) {
         scan(node.getExpression());
         scanAll(node.getCases());
         return null;
     }
 
     @Override
-    public Void visitSwitchExpression(SwitchExpressionTree node, Role role) {
+    public Void visitSwitchExpression(SwitchExpressionTree node, Void unused) {
         scan(node.getExpression());
         scanAll(node.getCases());
         return null;
     }
 
     @Override
-    public Void visitSynchronized(SynchronizedTree node, Role role) {
+    public Void visitSynchronized(SynchronizedTree node, Void unused) {
         scan(node.getExpression());
         scan(node.getBlock());
         return null;
     }
 
     @Override
-    public Void visitThrow(ThrowTree node, Role role) {
+    public Void visitThrow(ThrowTree node, Void unused) {
         scan(node.getExpression());
         return null;
     }
 
     @Override
-    public Void visitCompilationUnit(CompilationUnitTree node, Role role) {
+    public Void visitCompilationUnit(CompilationUnitTree node, Void unused) {
         // TODO module
         if (node.getPackage() != null) {
             scanAll(node.getPackageAnnotations());
@@ -426,53 +435,57 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
     }
 
     @Override
-    public Void visitTry(TryTree node, Role role) {
+    public Void visitTry(TryTree node, Void unused) {
         scanAll(node.getResources());
         scan(node.getBlock());
         scanAll(node.getCatches());
+        // special case: visit TryTree as middle for finally block
+        if (node.getFinallyBlock() != null) {
+            middle(node);
+        }
         scan(node.getFinallyBlock());
         return null;
     }
 
     @Override
-    public Void visitParameterizedType(ParameterizedTypeTree node, Role role) {
+    public Void visitParameterizedType(ParameterizedTypeTree node, Void unused) {
         scan(node.getType());
         scanAll(node.getTypeArguments());
         return null;
     }
 
     @Override
-    public Void visitUnionType(UnionTypeTree node, Role role) {
+    public Void visitUnionType(UnionTypeTree node, Void unused) {
         scanAll(node.getTypeAlternatives());
         return null;
     }
 
     @Override
-    public Void visitIntersectionType(IntersectionTypeTree node, Role role) {
+    public Void visitIntersectionType(IntersectionTypeTree node, Void unused) {
         scanAll(node.getBounds());
         return null;
     }
 
     @Override
-    public Void visitArrayType(ArrayTypeTree node, Role role) {
+    public Void visitArrayType(ArrayTypeTree node, Void unused) {
         scan(node.getType());
         return null;
     }
 
     @Override
-    public Void visitTypeCast(TypeCastTree node, Role role) {
+    public Void visitTypeCast(TypeCastTree node, Void unused) {
         scan(node.getType());
         scan(node.getExpression());
         return null;
     }
 
     @Override
-    public Void visitPrimitiveType(PrimitiveTypeTree node, Role role) {
+    public Void visitPrimitiveType(PrimitiveTypeTree node, Void unused) {
         return null;
     }
 
     @Override
-    public Void visitTypeParameter(TypeParameterTree node, Role role) {
+    public Void visitTypeParameter(TypeParameterTree node, Void unused) {
         scanAll(node.getAnnotations());
         middle(node);
         scanAll(node.getBounds());
@@ -480,7 +493,7 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
     }
 
     @Override
-    public Void visitInstanceOf(InstanceOfTree node, Role role) {
+    public Void visitInstanceOf(InstanceOfTree node, Void unused) {
         scan(node.getExpression());
         scan(node.getType());
         scan(node.getPattern());
@@ -488,13 +501,13 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
     }
 
     @Override
-    public Void visitUnary(UnaryTree node, Role role) {
+    public Void visitUnary(UnaryTree node, Void unused) {
         scan(node.getExpression());
         return null;
     }
 
     @Override
-    public Void visitVariable(VariableTree node, Role role) {
+    public Void visitVariable(VariableTree node, Void unused) {
         scan(node.getModifiers());
         scan(node.getType());
         scan(node.getNameExpression());
@@ -502,56 +515,56 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Role> {
     }
 
     @Override
-    public Void visitWhileLoop(WhileLoopTree node, Role role) {
+    public Void visitWhileLoop(WhileLoopTree node, Void unused) {
         scan(node.getCondition());
         scan(node.getStatement());
         return null;
     }
 
     @Override
-    public Void visitWildcard(WildcardTree node, Role role) {
+    public Void visitWildcard(WildcardTree node, Void unused) {
         scan(node.getBound());
         return null;
     }
 
     @Override
-    public Void visitModule(ModuleTree node, Role role) {
+    public Void visitModule(ModuleTree node, Void unused) {
         // TODO
         return null;
     }
 
     @Override
-    public Void visitExports(ExportsTree node, Role role) {
+    public Void visitExports(ExportsTree node, Void unused) {
         return null;
     }
 
     @Override
-    public Void visitOpens(OpensTree node, Role role) {
+    public Void visitOpens(OpensTree node, Void unused) {
         return null;
     }
 
     @Override
-    public Void visitProvides(ProvidesTree node, Role role) {
+    public Void visitProvides(ProvidesTree node, Void unused) {
         return null;
     }
 
     @Override
-    public Void visitRequires(RequiresTree node, Role role) {
+    public Void visitRequires(RequiresTree node, Void unused) {
         return null;
     }
 
     @Override
-    public Void visitUses(UsesTree node, Role role) {
+    public Void visitUses(UsesTree node, Void unused) {
         return null;
     }
 
     @Override
-    public Void visitOther(Tree node, Role role) {
+    public Void visitOther(Tree node, Void unused) {
         return null;
     }
 
     @Override
-    public Void visitYield(YieldTree node, Role role) {
+    public Void visitYield(YieldTree node, Void unused) {
         scan(node.getValue());
         return null;
     }
