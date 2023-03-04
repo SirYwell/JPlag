@@ -4,11 +4,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
+
+import com.google.common.graph.GraphBuilder;
+import com.google.common.graph.ImmutableGraph.Builder;
 
 /**
  * Parses a hierarchy from a text file. Format:
@@ -24,37 +25,53 @@ import java.util.stream.Collectors;
  *       FOURTH_AST_ELEMENT
  *     }
  * </pre>
+ * 
+ * A name with trailing {@code {}} indicates extraction at PRE and POST.
  */
+@SuppressWarnings("UnstableApiUsage")
 class HierarchyParser {
 
     private static final int INDENTATION_SPACES = 2;
 
-    public Map<String, HierarchyNode> parse(Path file) throws IOException {
+    public Hierarchy parse(Path file) throws IOException {
+        Builder<HierarchyNode> treeBuilder = GraphBuilder.directed().<HierarchyNode>immutable();
         List<String> lines = Files.readAllLines(file);
         Queue<String> queue = new ArrayDeque<>(lines);
-        Category root = new Category("ALL", null);
-        List<HierarchyNode> result = new ArrayList<>();
+        Category root = new Category("ALL");
         while (!queue.isEmpty()) {
-            parseCategoryOrTreeKind(queue, root, result);
+            parseCategoryOrTreeKind(queue, root, treeBuilder);
         }
-        return result.stream().collect(Collectors.toMap(HierarchyNode::name, v -> v));
+        return new Hierarchy(treeBuilder.build());
     }
 
-    private void parseCategoryOrTreeKind(Queue<String> lines, Category parent, List<HierarchyNode> result) {
+    private void parseCategoryOrTreeKind(Queue<String> lines, Category parent, Builder<HierarchyNode> result) {
         String element = lines.remove();
         int depth = indentationDepth(element);
         String cleanedName = clean(element);
         if (isCategory(element)) {
-            Category category = new Category(cleanedName, parent);
-            result.add(category);
-            parseCategory(lines, depth, category, result);
+            processStartEnd(cleanedName, name -> {
+                Category category = new Category(name);
+                result.putEdge(parent, category);
+                parseCategory(lines, depth, category, result);
+            });
         } else {
-            AstElement astElement = new AstElement(ExtendedKind.byName(cleanedName), parent);
-            result.add(astElement);
+            processStartEnd(cleanedName, name -> {
+                AstElement astElement = new AstElement(ExtendedKind.byName(name));
+                result.putEdge(parent, astElement);
+            });
         }
     }
 
-    private void parseCategory(Queue<String> lines, int depth, Category parent, List<HierarchyNode> result) {
+    private void processStartEnd(String cleanedName, Consumer<String> variantConsumer) {
+        if (cleanedName.endsWith("{}")) {
+            String sub = cleanedName.substring(0, cleanedName.length() - 2);
+            variantConsumer.accept(sub);
+        } else {
+            variantConsumer.accept(cleanedName);
+        }
+    }
+
+    private void parseCategory(Queue<String> lines, int depth, Category parent, Builder<HierarchyNode> result) {
         while (!lines.isEmpty()) {
             if (indentationDepth(lines.element()) <= depth) {
                 return;
@@ -90,10 +107,5 @@ class HierarchyParser {
             }
         }
         throw new IllegalArgumentException("String only contains spaces");
-    }
-
-    public static void main(String[] args) throws IOException {
-        Map<String, HierarchyNode> parse = new HierarchyParser().parse(Path.of("languages/java-configurable/src/main/resources/config.txt"));
-        int i = 3;
     }
 }

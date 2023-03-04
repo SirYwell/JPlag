@@ -48,7 +48,7 @@ public class ContextAdapter extends OrderedTreeScanner {
     }
 
     private Context createContext(Tree tree, Moment moment) {
-        return new Context(tree.accept(EXTENDED_KIND_ADAPTER, moment), moment);
+        return new Context(tree, tree.accept(EXTENDED_KIND_ADAPTER, moment), moment);
     }
 
     /**

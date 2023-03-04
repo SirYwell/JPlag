@@ -7,4 +7,11 @@
         <version>${revision}</version>
     </parent>
     <artifactId>java-configurable</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>31.1-jre</version>
+        </dependency>
+    </dependencies>
 </project>

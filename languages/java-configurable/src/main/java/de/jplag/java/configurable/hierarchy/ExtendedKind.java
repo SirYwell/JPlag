@@ -5,15 +5,16 @@ import java.util.Map;
 
 import com.sun.source.tree.Tree;
 
-/**
- *
- */
 public sealed interface ExtendedKind {
+
+    static ExtendedKind byTreeKind(Tree.Kind treeKind) {
+        return byName(treeKind.name());
+    }
 
     static ExtendedKind byName(String name) {
         // local cache to hide from outside
         class Cache {
-            private static final Map<String, Default> CACHE = new HashMap<>();
+            static final Map<String, Default> CACHE = new HashMap<>();
         }
         return switch (name) {
             case "TRY_WITH_RESOURCES" -> Extended.TRY_WITH_RESOURCES;

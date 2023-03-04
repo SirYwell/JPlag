@@ -18,9 +18,11 @@ public class ConfigurableJavaLanguage implements Language {
     private static final String IDENTIFIER = "java-configurable";
 
     private final Parser parser;
+    private final ExtractorGenerator extractorGenerator;
 
     public ConfigurableJavaLanguage(ExtractorGenerator extractorGenerator) {
-        parser = new Parser(extractorGenerator);
+        this.extractorGenerator = extractorGenerator;
+        this.parser = new Parser(extractorGenerator);
     }
 
     @Override
@@ -35,7 +37,7 @@ public class ConfigurableJavaLanguage implements Language {
 
     @Override
     public String getIdentifier() {
-        return IDENTIFIER;
+        return IDENTIFIER + "-" + this.extractorGenerator.name();
     }
 
     @Override
