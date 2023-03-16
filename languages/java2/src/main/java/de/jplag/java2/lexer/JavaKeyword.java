@@ -77,4 +77,9 @@ public enum JavaKeyword implements TokenType {
     public String getDescription() {
         return name();
     }
+
+    @Override
+    public String toString() {
+        return name().toLowerCase();
+    }
 }

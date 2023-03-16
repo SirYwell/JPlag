@@ -13,12 +13,12 @@ import de.jplag.Token;
  * Language for Java.
  */
 @MetaInfServices(de.jplag.Language.class)
-public class Language implements de.jplag.Language {
+public class JavaLexerLanguage implements de.jplag.Language {
     private static final String IDENTIFIER = "java2";
 
     private final JavaLexerAdapter parser;
 
-    public Language() {
+    public JavaLexerLanguage() {
         parser = new JavaLexerAdapter();
     }
 
@@ -44,6 +44,6 @@ public class Language implements de.jplag.Language {
 
     @Override
     public List<Token> parse(Set<File> files) throws ParsingException {
-        return this.parser.parse(files);
+        return new JavaLexerAdapter().parse(files);
     }
 }

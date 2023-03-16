@@ -37,6 +37,8 @@ public class LexerExtractor {
     }
 
     public void parse(JavaLexerAdapter parser) throws ParsingException {
+        this.currentLine = 1;
+        this.currentLineBreakIndex = 0;
         try {
             char[] chars = Files.readString(path).toCharArray();
             JavaLexer lexer = new JavaLexer(chars, 0, chars.length);

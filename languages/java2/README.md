@@ -21,4 +21,4 @@ information.
 
 ### Usage
 
-This language module is only available using  a `JPlagOption` object with `new de.jplag.java2.Language()` as `language` in the Java API as described in the usage information in the [readme of the main project](https://github.com/jplag/JPlag#usage) and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
+This language module is only available using  a `JPlagOption` object with `new de.jplag.java2.JavaLexerLanguage()` as `language` in the Java API as described in the usage information in the [readme of the main project](https://github.com/jplag/JPlag#usage) and [in the wiki](https://github.com/jplag/JPlag/wiki/1.-How-to-Use-JPlag).
