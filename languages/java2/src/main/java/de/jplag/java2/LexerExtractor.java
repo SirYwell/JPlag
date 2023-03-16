@@ -62,7 +62,7 @@ public class LexerExtractor {
             if (token instanceof SeparatorToken separatorToken) {
                 switch (separatorToken.separator()) {
                     case "@" -> {
-                        if (i + 1 < list.size() && list.get(i + 1)instanceof KeywordToken kw && kw.keyword() == JavaKeyword.INTERFACE) {
+                        if (i + 1 < list.size() && list.get(i + 1) instanceof KeywordToken kw && kw.keyword() == JavaKeyword.INTERFACE) {
                             i++;
                             parser.add(JavaTokenType.ANNO_T, path.toFile(), currentLine, column, kw.end() - token.start());
                         }
