@@ -17,6 +17,7 @@ public class JavaLexerAdapter extends AbstractParser {
         tokens = new ArrayList<>();
         for (File file : files) {
             new LexerExtractor(file).parse(this);
+            add(Token.fileEnd(file));
         }
         return tokens;
     }

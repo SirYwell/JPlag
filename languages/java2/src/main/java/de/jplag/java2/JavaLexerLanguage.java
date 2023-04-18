@@ -16,12 +16,6 @@ import de.jplag.Token;
 public class JavaLexerLanguage implements de.jplag.Language {
     private static final String IDENTIFIER = "java2";
 
-    private final JavaLexerAdapter parser;
-
-    public JavaLexerLanguage() {
-        parser = new JavaLexerAdapter();
-    }
-
     @Override
     public String[] suffixes() {
         return new String[] {".java", ".JAVA"};
