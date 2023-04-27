@@ -20,7 +20,8 @@ class HierarchyNodeMapperExtractor implements Extractor {
     private static final Set<? extends ExtendedKind> EXTRACTION_PAIRS = Set.of(byTreeKind(Kind.CLASS), byTreeKind(Kind.INTERFACE),
             byTreeKind(Kind.ENUM), byTreeKind(Kind.ANNOTATION_TYPE), byTreeKind(Kind.RECORD), byTreeKind(Kind.LAMBDA_EXPRESSION),
             byTreeKind(Kind.METHOD), byTreeKind(Kind.ENHANCED_FOR_LOOP), byTreeKind(Kind.FOR_LOOP), byTreeKind(Kind.DO_WHILE_LOOP),
-            byTreeKind(Kind.WHILE_LOOP), byTreeKind(Kind.CATCH), byTreeKind(Kind.SWITCH), byTreeKind(Kind.SWITCH_EXPRESSION), byTreeKind(Kind.IF));
+            byTreeKind(Kind.WHILE_LOOP), byTreeKind(Kind.CATCH), byTreeKind(Kind.SWITCH), byTreeKind(Kind.SWITCH_EXPRESSION), byTreeKind(Kind.IF),
+            byTreeKind(Kind.SYNCHRONIZED), byTreeKind(Kind.PARENTHESIZED), byTreeKind(Kind.BLOCK));
     private static final Set<? extends ExtendedKind> EXTRACT_MIDDLE = EnumSet.of(ExtendedKind.Extended.ELSE, ExtendedKind.Extended.FINALLY);
     private final Hierarchy hierarchy;
     private final HierarchyNodeMapper nodeMapper;
@@ -71,6 +72,6 @@ class HierarchyNodeMapperExtractor implements Extractor {
         }
         Optional<AstElement> element = this.hierarchy.element(context.kind());
         return element.flatMap(this.nodeMapper::map)
-                .map(node -> SimpleTokenType.CACHE.computeIfAbsent(prefix + context.kind().name() + suffix, SimpleTokenType::new));
+                .map(node -> SimpleTokenType.CACHE.computeIfAbsent(prefix + node.name() + suffix, SimpleTokenType::new));
     }
 }

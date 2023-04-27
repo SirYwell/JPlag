@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import org.kohsuke.MetaInfServices;
-
 import de.jplag.Language;
 import de.jplag.ParsingException;
 import de.jplag.Token;
@@ -13,7 +11,6 @@ import de.jplag.Token;
 /**
  * Language for Java 9 and newer.
  */
-@MetaInfServices(Language.class)
 public class ConfigurableJavaLanguage implements Language {
     private static final String IDENTIFIER = "java-configurable";
 

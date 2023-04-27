@@ -52,13 +52,11 @@ public class JavacAdapter {
         }
         parsingExceptions.addAll(processErrors(parser.logger, listener));
         if (!parsingExceptions.isEmpty()) {
-            throw ParsingException.wrappingExceptions(parsingExceptions);
+            // throw ParsingException.wrappingExceptions(parsingExceptions);
         }
     }
 
     private static Extractor getExtractor(Parser parser, Trees trees, CompilationUnitTree ast) {
-        // TODO currently hardcoded
-        // return new TextFileExtractorGenerator(Path.of("src", "main", "resources", "example.txt")).generate(ast, trees);
         return parser.getExtractorGenerator().generate(ast, trees);
     }
 

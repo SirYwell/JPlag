@@ -169,11 +169,13 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Void> {
 
     @Override
     public Void visitCase(CaseTree node, Void unused) {
-        // TODO there might be duplication here
-        scanAll(node.getExpressions());
-        scanAll(node.getStatements());
+        // scanAll(node.getExpressions()); included in Labels
         scanAll(node.getLabels());
-        scan(node.getBody());
+        if (node.getCaseKind() == CaseTree.CaseKind.RULE) {
+            scan(node.getBody());
+        } else {
+            scanAll(node.getStatements());
+        }
         return null;
     }
 
@@ -424,7 +426,9 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Void> {
 
     @Override
     public Void visitCompilationUnit(CompilationUnitTree node, Void unused) {
-        // TODO module
+        if (node.getModule() != null) {
+            scan(node.getModule());
+        }
         if (node.getPackage() != null) {
             scanAll(node.getPackageAnnotations());
             scan(node.getPackage());
@@ -511,6 +515,7 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Void> {
         scan(node.getModifiers());
         scan(node.getType());
         scan(node.getNameExpression());
+        scan(node.getInitializer());
         return null;
     }
 
@@ -529,7 +534,9 @@ public abstract class OrderedTreeScanner implements TreeVisitor<Void, Void> {
 
     @Override
     public Void visitModule(ModuleTree node, Void unused) {
-        // TODO
+        scanAll(node.getAnnotations());
+        scan(node.getName());
+        scanAll(node.getDirectives());
         return null;
     }
 

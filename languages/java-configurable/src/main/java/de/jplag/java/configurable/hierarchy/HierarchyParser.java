@@ -25,8 +25,6 @@ import com.google.common.graph.ImmutableGraph.Builder;
  *       FOURTH_AST_ELEMENT
  *     }
  * </pre>
- * 
- * A name with trailing {@code {}} indicates extraction at PRE and POST.
  */
 @SuppressWarnings("UnstableApiUsage")
 class HierarchyParser {
@@ -37,7 +35,7 @@ class HierarchyParser {
         Builder<HierarchyNode> treeBuilder = GraphBuilder.directed().<HierarchyNode>immutable();
         List<String> lines = Files.readAllLines(file);
         Queue<String> queue = new ArrayDeque<>(lines);
-        Category root = new Category("ALL");
+        Category root = Hierarchy.ALL;
         while (!queue.isEmpty()) {
             parseCategoryOrTreeKind(queue, root, treeBuilder);
         }
@@ -49,25 +47,12 @@ class HierarchyParser {
         int depth = indentationDepth(element);
         String cleanedName = clean(element);
         if (isCategory(element)) {
-            processStartEnd(cleanedName, name -> {
-                Category category = new Category(name);
-                result.putEdge(parent, category);
-                parseCategory(lines, depth, category, result);
-            });
+            Category category = new Category(cleanedName);
+            result.putEdge(parent, category);
+            parseCategory(lines, depth, category, result);
         } else {
-            processStartEnd(cleanedName, name -> {
-                AstElement astElement = new AstElement(ExtendedKind.byName(name));
-                result.putEdge(parent, astElement);
-            });
-        }
-    }
-
-    private void processStartEnd(String cleanedName, Consumer<String> variantConsumer) {
-        if (cleanedName.endsWith("{}")) {
-            String sub = cleanedName.substring(0, cleanedName.length() - 2);
-            variantConsumer.accept(sub);
-        } else {
-            variantConsumer.accept(cleanedName);
+            AstElement astElement = new AstElement(ExtendedKind.byName(cleanedName));
+            result.putEdge(parent, astElement);
         }
     }
 
